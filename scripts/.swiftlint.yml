@@ -1,0 +1,81 @@
+# 実行対象外のディレクトリ
+excluded:
+  - Pods
+  - Carthage
+  - vendor
+
+# 有効にするルール
+opt_in_rules:
+  - force_unwrapping           # 強制アンラップ禁止
+  - force_cast                 # 強制キャスト禁止
+  - fatal_error_message        # fatalErrorメッセージ必須
+  - empty_count                # .count == 0 ではなく .isEmpty を推奨
+  - discouraged_direct_init    # UIDevice等の直接初期化を抑制
+  - cyclomatic_complexity      # 循環的複雑度
+  - function_body_length       # 関数長
+  - file_length                # ファイル長
+  - strict_fileprivate         # fileprivateよりprivateを推奨
+
+# 既存ルールの詳細設定
+cyclomatic_complexity:
+  warning: 10
+  error: 20
+
+function_body_length:
+  warning: 40
+  error: 50
+
+file_length:
+  warning: 400
+  error: 500
+
+# カスタムルールの定義
+custom_rules:
+  # セキュリティ: Keychain利用の推奨とUserDefaultsへの機密情報保存禁止
+  security_data_protection:
+    name: "Data Protection"
+    regex: "UserDefaults\\.standard\\.set"
+    message: "機密情報を UserDefaults に保存しないでください。Keychain の適切な使用を検討してください。"
+    severity: warning
+
+  # セキュリティ: 反転解析・動的解析への対策（Frida/Objection等）
+  security_anti_reverse_engineering:
+    name: "Anti-Reverse Engineering"
+    regex: "(jailbreak|ptrace|isDebuggerAttached)"
+    match_kinds:
+      - identifier
+    message: "脱獄検知やデバッグ検知のロジックが適切に実装されているか、難読化設定と併せて確認してください。"
+    severity: warning
+
+  # セキュリティ: WebView/DeepLinkの脆弱性対策
+  security_vulnerability_patching:
+    name: "Vulnerability Patching"
+    regex: "(uiWebView|loadHTMLString|canOpenURL)"
+    message: "インセキュアな Deep Links や WebView の脆弱性を防ぐため、バリデーションと最新の API（WKWebView等）を利用してください。"
+    severity: warning
+
+  # ネットワークセキュリティ: SSL Pinning / ATS
+  security_network:
+    name: "Network Security"
+    regex: "URLSessionDelegate"
+    message: "SSL Pinningの実装検討や、Info.plist の ATS (App Transport Security) 設定が適切であることを確認してください。"
+    severity: warning
+
+  # NSObjectの比較に関するベストプラクティス
+  nsobject_comparison:
+    name: "NSObject Comparison"
+    regex: "==.*NSObject"
+    message: "NSObject の比較には isEqual を優先して使用してください。"
+    severity: warning
+
+  # エラーハンドリング: アラート通知の徹底（概念的チェック）
+  error_handling_alert:
+    name: "Error Handling Alert"
+    regex: "catch \\{"
+    message: "エラーを無視せず、Alert 等を用いてユーザーがエラー内容を理解できる通知を実装してください。"
+    severity: warning
+
+# 解析の詳細設定
+analyzer_rules:
+  - unused_import
+  - unused_private_declaration
