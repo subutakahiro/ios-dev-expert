@@ -40,7 +40,7 @@ ViewとModelの仲介役であり、「Viewの状態」を管理します。
 
 ### iOSにおけるデータバインディングの実現
 
-MVVMを成立させるには、ViewModelの変更をViewに伝える**「データバインディング」**が必要です。
+MVVMを成立させるには、ViewModelの変更をViewに伝える **「データバインディング」** が必要です。
 
 - SwiftUIの場合:
     - `@Published` を使ってプロパティの変更を通知し、View側で `@StateObject` や `@ObservedObject` で受け取ります。
